@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TheJavas 🤖</title>
+
+  <!-- Google Font for a fun style -->
+  <link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet" />
+
+  <!-- Dialogflow Messenger SDK -->
+  <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Chewy', cursive;
+      background: url('https://newo.ai/wp-content/uploads/2024/09/1-Artificial-intelligence-vs.-Machine-learning.jpg') no-repeat center center fixed;
+      background-size: cover;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 0.5em;
+      text-shadow: 2px 2px 4px #e63946;
+    }
+
+    p {
+      font-size: 1.5em;
+      margin-bottom: 2em;
+      color: #f1faee;
+    }
+
+    a {
+      font-size: 1.3em;
+      color: #f1faee;
+      text-decoration: underline;
+      cursor: pointer;
+      margin: 0.5em;
+    }
+
+    df-messenger {
+      --df-messenger-button-titlebar-color: white;
+      --df-messenger-chat-background-color: white;
+      --df-messenger-font-color: white;
+      --df-messenger-user-message: black;
+      --df-messenger-bot-message: black;
+      --df-messenger-font-family: 'Chewy', cursive;
+
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      width: 400px;
+      height: 500px;
+      max-width: 90vw;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2em;
+      }
+
+      p {
+        font-size: 1.2em;
+      }
+
+      df-messenger {
+        width: 90vw;
+        height: 80vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+<!-- Top-left chatbot links -->
+  <div class="top-left-links">
+    <a href="#" onclick="sendToChatbot('What are the types of AI?')">What are the types of AI?</a>
+    <a href="#" onclick="sendToChatbot('What is machine learning?')">What is machine learning?</a>
+    <a href="#" onclick="sendToChatbot('Explain deep learning')">Explain deep learning</a>
+  </div>
+
+  <!-- Centered welcome message -->
+  <div class="center-content">
+    <h1>Welcome to TheJavas 🤖</h1>
+    <p>Your intelligent assistant is ready to help!</p>
+  </div>
+
+
+  <!-- Dialogflow Messenger Chatbot -->
+  <df-messenger
+    intent="WELCOME"
+    chat-title="🤖 TheJavas"
+    agent-id="0d4bfd8b-b793-47dc-8799-08e1881a5f47"
+    language-code="en"
+    chat-icon="https://cdn-icons-png.flaticon.com/512/4712/4712107.png">
+  </df-messenger>
+
+  <script>
+    function sendToChatbot(question) {
+      const messenger = document.querySelector('df-messenger');
+      if (!messenger) return;
+
+      const waitForIframe = setInterval(() => {
+        const iframe = messenger.shadowRoot?.querySelector('iframe');
+        if (iframe && iframe.contentWindow) {
+          clearInterval(waitForIframe);
+
+          // Open the chat window
+          const openChat = messenger.shadowRoot
+            ?.querySelector('df-messenger-chat')
+            ?.shadowRoot?.querySelector('button');
+          if (openChat) openChat.click();
+
+          // Wait for the iframe to load and then send the message
+          iframe.onload = () => {
+            const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+            const inputField = innerDoc.querySelector('input');
+            const enterEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+
+            if (inputField) {
+              inputField.value = question;
+              inputField.dispatchEvent(new Event('input', { bubbles: true }));
+              inputField.dispatchEvent(enterEvent);
+            }
+          };
+        }
+      }, 300);
+    }
+  </script>
+</body>
+</html>
