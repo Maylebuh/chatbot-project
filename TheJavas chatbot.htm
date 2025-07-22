@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TheJavas 🤖</title>
-
-  <!-- Google Font for a fun style -->
+  
+  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet" />
-
+  
   <!-- Dialogflow Messenger SDK -->
   <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
 
@@ -39,20 +39,33 @@
       color: #f1faee;
     }
 
-    a {
+    .quick-links {
+      margin: 20px 0;
+    }
+
+    .quick-links a {
       font-size: 1.3em;
       color: #f1faee;
       text-decoration: underline;
       cursor: pointer;
-      margin: 0.5em;
+      margin: 0 15px;
+      display: inline-block;
+      padding: 5px 10px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 20px;
+      transition: all 0.3s;
+    }
+
+    .quick-links a:hover {
+      background: rgba(230, 57, 70, 0.7);
     }
 
     df-messenger {
-      --df-messenger-button-titlebar-color: white;
-      --df-messenger-chat-background-color: white;
-      --df-messenger-font-color: white;
-      --df-messenger-user-message: black;
-      --df-messenger-bot-message: black;
+      --df-messenger-button-titlebar-color: #e63946;
+      --df-messenger-chat-background-color: #f1faee;
+      --df-messenger-font-color: #1d3557;
+      --df-messenger-user-message: #457b9d;
+      --df-messenger-bot-message: #a8dadc;
       --df-messenger-font-family: 'Chewy', cursive;
 
       position: fixed;
@@ -68,74 +81,69 @@
       h1 {
         font-size: 2em;
       }
-
       p {
         font-size: 1.2em;
       }
-
+      .quick-links a {
+        display: block;
+        margin: 10px auto;
+        width: 80%;
+      }
       df-messenger {
         width: 90vw;
-        height: 80vh;
+        height: 70vh;
       }
     }
   </style>
 </head>
 <body>
   
-<!-- Top-left chatbot links -->
-  <div class="top-left-links">
-    <a href="#" onclick="sendToChatbot('What are the types of AI?')">What are the types of AI?</a>
-    <a href="#" onclick="sendToChatbot('What is machine learning?')">What is machine learning?</a>
-    <a href="#" onclick="sendToChatbot('Explain deep learning')">Explain deep learning</a>
-  </div>
+  <!-- Quick query links -->
+  <div class="quick-links">
+    <a onclick="sendToChatbot('What are the types of AI?')">Types of AI</a>
+    <a onclick="sendToChatbot('What is machine learning?')">Machine Learning</a>
+    <a onclick="sendToChatbot('Explain deep learning')">Deep Learning</a>
+  </div>
 
-  <!-- Centered welcome message -->
-  <div class="center-content">
-    <h1>Welcome to TheJavas 🤖</h1>
-    <p>Your intelligent assistant is ready to help!</p>
-  </div>
+  <!-- Welcome message -->
+  <div class="center-content">
+    <h1>Welcome to TheJavas 🤖</h1>
+    <p>Your intelligent assistant is ready to help!</p>
+  </div>
 
-
-  <!-- Dialogflow Messenger Chatbot -->
+  <!-- Dialogflow Chatbot -->
   <df-messenger
     intent="WELCOME"
-    chat-title="🤖 TheJavas"
-    agent-id="0d4bfd8b-b793-47dc-8799-08e1881a5f47"
+    chat-title="TheJavas"
+    agent-id="YOUR-AGENT-ID-HERE" <!-- REPLACE WITH YOUR DIALOGFLOW AGENT ID -->
     language-code="en"
     chat-icon="https://cdn-icons-png.flaticon.com/512/4712/4712107.png">
   </df-messenger>
 
   <script>
+    // Improved chatbot interaction
     function sendToChatbot(question) {
-      const messenger = document.querySelector('df-messenger');
-      if (!messenger) return;
-
-      const waitForIframe = setInterval(() => {
-        const iframe = messenger.shadowRoot?.querySelector('iframe');
-        if (iframe && iframe.contentWindow) {
-          clearInterval(waitForIframe);
-
-          // Open the chat window
-          const openChat = messenger.shadowRoot
-            ?.querySelector('df-messenger-chat')
-            ?.shadowRoot?.querySelector('button');
-          if (openChat) openChat.click();
-
-          // Wait for the iframe to load and then send the message
-          iframe.onload = () => {
-            const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
-            const inputField = innerDoc.querySelector('input');
-            const enterEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
-
-            if (inputField) {
-              inputField.value = question;
-              inputField.dispatchEvent(new Event('input', { bubbles: true }));
-              inputField.dispatchEvent(enterEvent);
-            }
-          };
-        }
-      }, 300);
+      const dfMessenger = document.querySelector('df-messenger');
+      if (dfMessenger) {
+        // Focus and open the chat
+        dfMessenger.focus();
+        
+        // Delay slightly to ensure chat is open
+        setTimeout(() => {
+          // Use Dialogflow's built-in method to send text
+          dfMessenger.renderCustomText(question);
+        }, 300);
+      }
     }
+
+    // Auto-open chatbot after 5 seconds
+    setTimeout(() => {
+      const dfMessenger = document.querySelector('df-messenger');
+      if (dfMessenger) {
+        dfMessenger.shadowRoot.querySelector('df-messenger-chat')
+          .shadowRoot.querySelector('button').click();
+      }
+    }, 5000);
   </script>
 </body>
 </html>
